@@ -36,15 +36,15 @@
   $('#prevSlide').addEventListener('click',()=>go(slide-1));$('#nextSlide').addEventListener('click',()=>go(slide+1));restart();
 
   const filterBar=$('#filterBar'),grid=$('#productGrid'),viewAllBtn=$('#viewAllBtn'),viewAllLabel=$('#viewAllLabel'),search=$('#productSearch');
-  let activeCategory='all',showAll=false,term='';
+  let activeCategory='all',showAll=true,term='';
   const categoryLabel=id=>CATEGORIES.find(c=>c.id===id)?.label||id;
   function buildFilters(){
     const tabs=[{id:'all',label:'All Products'},...CATEGORIES];
     filterBar.innerHTML=tabs.map(t=>`<button class="filter-btn${t.id===activeCategory?' active':''}" data-cat="${t.id}">${t.label}</button>`).join('');
-    $$('.filter-btn',filterBar).forEach(btn=>btn.addEventListener('click',()=>{activeCategory=btn.dataset.cat;showAll=false;buildFilters();renderProducts()}));
+    $$('.filter-btn',filterBar).forEach(btn=>btn.addEventListener('click',()=>{activeCategory=btn.dataset.cat;buildFilters();renderProducts()}));
   }
   function badgeFor(p,i){if(p.featured)return 'Featured';if(i%11===0)return 'Popular';if(i%13===0)return 'Best Seller';return ''}
-  function productCard(p,i){const badge=badgeFor(p,i);const msg=`Assalamualaikum, I would like to ask about ${p.en} (${p.name}). Please share price and availability.`;return `<article class="product-card reveal in">${badge?`<span class="product-badge">${badge}</span>`:''}<div class="product-image"><img src="${p.image}" alt="${p.en} - ${p.name}" loading="lazy" onerror="this.onerror=null;this.src='images/ashwagandha.jpg'"></div><div class="product-body"><div class="product-meta"><div><div class="product-name-ur">${p.name}</div><div class="product-name-en">${p.en}</div></div><span class="cat-chip">${categoryLabel(p.category)}</span></div><a class="product-ask" href="${waLink(msg)}" target="_blank" rel="noopener">Ask about this product</a></div></article>`}
+  function productCard(p,i){const badge=badgeFor(p,i);const msg=`Assalamualaikum, I would like to ask about ${p.en} (${p.name}). Please share price and availability.`;const media=p.image?`<div class="product-image"><img src="${p.image}" alt="${p.en} - ${p.name}" loading="lazy"></div>`:`<div class="product-image product-image-missing" role="img" aria-label="Product image not supplied"><span>Product image not supplied</span></div>`;return `<article class="product-card reveal in">${badge?`<span class="product-badge">${badge}</span>`:''}${media}<div class="product-body"><div class="product-meta"><div><div class="product-name-ur">${p.name}</div><div class="product-name-en">${p.en}</div></div><span class="cat-chip">${categoryLabel(p.category)}</span></div><a class="product-ask" href="${waLink(msg)}" target="_blank" rel="noopener">Ask about this product</a></div></article>`}
   function renderProducts(){
     let list=PRODUCTS.filter(p=>(activeCategory==='all'||p.category===activeCategory)&&(`${p.en} ${p.name}`.toLowerCase().includes(term)));
     const total=list.length;
